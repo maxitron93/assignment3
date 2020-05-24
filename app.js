@@ -4,6 +4,7 @@ const rawData = JSON.parse(originalData);
 // Set Chart Dimensions
 const chartWidth = 1000
 const chartHeight = 500
+const chartGap = 50
 
 // Set XY scales
 let xValues = []
@@ -14,10 +15,10 @@ rawData['nodes'].forEach((el) => {
 })
 let scaleX = d3.scaleLinear()
 	.domain([d3.min(xValues), d3.max(xValues)])
-	.range([0 + 50, chartWidth - 50])
+	.range([0 + chartGap, chartWidth - chartGap])
 let scaleY = d3.scaleLinear()
 	.domain([d3.min(yValues), d3.max(yValues)])
-	.range([chartHeight - 50, 50]) // Invert y-axis
+	.range([chartHeight - chartGap, chartGap]) // Invert y-axis
 
 // Set Circle Radius Scale
 let site_amounts = {}
@@ -54,6 +55,12 @@ let svg = d3.select('#network_container')
 	.attr('width', chartWidth)
 	.attr('height', chartHeight)
 
+// Set Colors
+let link_color_full = 'rgb(100,100,100)'
+let link_color_transparent = 'rgba(100,100,100,0.1)'
+let node_color_full = 'rgb(50,115,170)'
+let node_color_transparent = 'rgb(215,230,250)'
+
 // Create Links
 nodeData = {}
 rawData['nodes'].forEach((node) => {
@@ -78,9 +85,13 @@ svg.selectAll('line')
 	.attr('y2', (link_data) => {
 		return scaleY(nodeData[link_data['node02']]['y']) + 'px'
 	})
-	.style("stroke", "rgb(100,100,100)")
-	.style("stroke-width", (link_data) => {
+	.style('stroke', link_color_full)
+	.style('stroke-width', (link_data) => {
 		return scaleT(link_data['amount']) + 'px'
+	})
+	.style('stroke-linecap', 'round')
+	.attr('class', (link_data) => {
+		return 'link ' + link_data['node01'] + ' ' + link_data['node02']
 	})
 
 // Create Nodes
@@ -100,7 +111,38 @@ svg.selectAll('circle')
 		let r = site_amounts[node_data['id']]
 		return scaleR(r)
 	})
-	.attr('fill', 'red')
+	.attr('fill', node_color_full)
+	.attr('class', (node_data) => {
+		return 'node ' + node_data['id']
+	})
+	.on('mouseover', handleMouseOver)
+	.on('mouseout', handleMouseOut)
+
+// Add hover interactivity
+let nodes = document.querySelectorAll('.node')
+let links = document.querySelectorAll('.link')
+
+function handleMouseOver(node_data) {
+	nodes.forEach((node) => {
+		if(node_data['id'] != node.classList[1]) {
+			node.style.fill = node_color_transparent
+		}
+	})
+	links.forEach((link) => {
+		if(node_data['id'] != link.classList[1] && node_data['id'] != link.classList[2]) {
+			link.style.stroke = link_color_transparent
+		}
+	})
+} 
+function handleMouseOut(node_data) {
+	nodes.forEach((node) => {
+		node.style.fill = node_color_full
+	})
+	links.forEach((link) => {
+		link.style.stroke = link_color_full
+	})
+
+} 
 
 // // Text for X, Y, Trading Amount
 // svg.selectAll('text')

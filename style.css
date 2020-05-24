@@ -5,6 +5,7 @@
     font-family: 'Noto Sans', sans-serif;
     font-size: 1em;
     color: rgb(60, 60, 60);
+    transition: 0.3s
 }
 body {
     padding-bottom: 50px;
