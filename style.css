@@ -1,0 +1,16 @@
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+    font-family: 'Noto Sans', sans-serif;
+    font-size: 1em;
+    color: rgb(60, 60, 60);
+}
+
+.main_heading {
+    font-size: 200%;
+    text-align: center;
+    margin-top: 20px;
+}
+
+
