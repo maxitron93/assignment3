@@ -6,11 +6,22 @@
     font-size: 1em;
     color: rgb(60, 60, 60);
 }
+body {
+    padding-bottom: 50px;
+}
 
 .main_heading {
     font-size: 200%;
     text-align: center;
     margin-top: 20px;
 }
+
+#network_container {
+    width: 1000px;
+    height: 550px;
+    margin: auto;
+    margin-top: 20px;
+}
+
 
 
