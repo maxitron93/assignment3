@@ -19,7 +19,7 @@ let scaleY = d3.scaleLinear()
 	.domain([d3.min(yValues), d3.max(yValues)])
 	.range([chartHeight - 50, 50]) // Invert y-axis
 
-// Set radius scales
+// Set Circle Radius Scale
 let site_amounts = {}
 rawData['nodes'].forEach((node) => {
 	let site = node['id']
@@ -33,10 +33,20 @@ let amounts = []
 rawData['nodes'].forEach((node) => {
 	amounts.push(site_amounts[node['id']])
 })
-let scaleDownValue = 40
+let scaleDownValueRadius = 40
 let scaleR = d3.scaleLinear()
 	.domain([d3.min(amounts), d3.max(amounts)])
-	.range([d3.min(amounts) / scaleDownValue, d3.max(amounts) / scaleDownValue])
+	.range([d3.min(amounts) / scaleDownValueRadius, d3.max(amounts) / scaleDownValueRadius])
+
+// Set Line Thickness Scale
+let trades = []
+rawData['links'].forEach((link) => {
+	trades.push(link['amount'])
+})
+scaleDownValueThickness = 100
+let scaleT = d3.scaleLinear()
+	.domain([d3.min(trades), d3.max(trades)])
+	.range([d3.min(trades) / scaleDownValueThickness, d3.max(trades) / scaleDownValueThickness])
 
 // Create Chart Area
 let svg = d3.select('#network_container')
@@ -69,7 +79,9 @@ svg.selectAll('line')
 		return scaleY(nodeData[link_data['node02']]['y']) + 'px'
 	})
 	.style("stroke", "rgb(100,100,100)")
-	.style("stroke-width", 2)
+	.style("stroke-width", (link_data) => {
+		return scaleT(link_data['amount']) + 'px'
+	})
 
 // Create Nodes
 svg.selectAll('circle')
@@ -96,7 +108,7 @@ svg.selectAll('circle')
 // 	.enter()
 // 	.append('text')
 // 	.text((node_data) => {
-// 		return node_data['x'] + ', ' + node_data['y'] + ', ' + site_amounts[node_data['id']]
+// 		return node_data['id'] + ', ' + node_data['x'] + ', ' + node_data['y'] + ', ' + site_amounts[node_data['id']]
 // 	})
 // 	.attr('x', (node_data) => {
 // 		return scaleX(node_data['x']) +'px'
