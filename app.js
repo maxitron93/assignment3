@@ -1,5 +1,5 @@
 // Load in the data
-const rawData = JSON.parse(data);
+const rawData = JSON.parse(originalData);
 
 // Set Chart Dimensions
 const chartWidth = 1000
@@ -44,6 +44,33 @@ let svg = d3.select('#network_container')
 	.attr('width', chartWidth)
 	.attr('height', chartHeight)
 
+// Create Links
+nodeData = {}
+rawData['nodes'].forEach((node) => {
+	nodeData[node['id']] = {
+		x: node['x'],
+		y: node['y']
+	}
+})
+svg.selectAll('line')
+	.data(rawData['links'])
+	.enter()
+	.append('line')
+	.attr('x1', (link_data) => {
+		return scaleX(nodeData[link_data['node01']]['x']) + 'px'
+	})
+	.attr('y1', (link_data) => {
+		return scaleY(nodeData[link_data['node01']]['y']) + 'px'
+	})
+	.attr('x2', (link_data) => {
+		return scaleX(nodeData[link_data['node02']]['x']) + 'px'
+	})
+	.attr('y2', (link_data) => {
+		return scaleY(nodeData[link_data['node02']]['y']) + 'px'
+	})
+	.style("stroke", "rgb(100,100,100)")
+	.style("stroke-width", 2)
+
 // Create Nodes
 svg.selectAll('circle')
 	.data(rawData['nodes'])
@@ -63,19 +90,17 @@ svg.selectAll('circle')
 	})
 	.attr('fill', 'red')
 
-
-
-// Text for X, Y, Trading Amount
-svg.selectAll('text')
-	.data(rawData['nodes'])
-	.enter()
-	.append('text')
-	.text((node_data) => {
-		return node_data['x'] + ', ' + node_data['y'] + ', ' + site_amounts[node_data['id']]
-	})
-	.attr('x', (node_data) => {
-		return scaleX(node_data['x']) +'px'
-	})
-	.attr('y', (node_data) => {
-		return scaleY(node_data['y']) +'px'
-	})
+// // Text for X, Y, Trading Amount
+// svg.selectAll('text')
+// 	.data(rawData['nodes'])
+// 	.enter()
+// 	.append('text')
+// 	.text((node_data) => {
+// 		return node_data['x'] + ', ' + node_data['y'] + ', ' + site_amounts[node_data['id']]
+// 	})
+// 	.attr('x', (node_data) => {
+// 		return scaleX(node_data['x']) +'px'
+// 	})
+// 	.attr('y', (node_data) => {
+// 		return scaleY(node_data['y']) +'px'
+// 	})
