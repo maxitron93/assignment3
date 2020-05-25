@@ -121,40 +121,57 @@ svg.selectAll('circle')
 // Add hover interactivity
 let nodes = document.querySelectorAll('.node')
 let links = document.querySelectorAll('.link')
+let node_links_count = {}
+rawData['nodes'].forEach((node) => {
+	node_links_count[node['id']] = 0
+})
+rawData['links'].forEach((link) => {
+	node_links_count[link['node01']] += 1
+	node_links_count[link['node02']] += 1
+})
 
 function handleMouseOver(node_data) {
+	// Make other nodes transparent
 	nodes.forEach((node) => {
 		if(node_data['id'] != node.classList[1]) {
 			node.style.fill = node_color_transparent
 		}
 	})
+	// Make other links transparent
 	links.forEach((link) => {
 		if(node_data['id'] != link.classList[1] && node_data['id'] != link.classList[2]) {
 			link.style.stroke = link_color_transparent
 		}
 	})
+	// Show tooltip
+	let x = scaleX(node_data['x'])
+	let y = scaleY(node_data['y'])
+	d3.select('#tooltip')
+		.style('left', (x - 150) + 'px')
+		.style('top', (y - 90) + 'px')
+		.style('display', 'block')
+	d3.select('#amount_traded')
+		.text(() => {
+			return site_amounts[node_data['id']]
+		})
+	d3.select('#connected_locations')
+		.text(() => {
+			return node_links_count[node_data['id']]
+		})
+		
+		
+		
 } 
 function handleMouseOut(node_data) {
+	// Make all nodes full color
 	nodes.forEach((node) => {
 		node.style.fill = node_color_full
 	})
+	// Make all links full color
 	links.forEach((link) => {
 		link.style.stroke = link_color_full
 	})
-
-} 
-
-// // Text for X, Y, Trading Amount
-// svg.selectAll('text')
-// 	.data(rawData['nodes'])
-// 	.enter()
-// 	.append('text')
-// 	.text((node_data) => {
-// 		return node_data['id'] + ', ' + node_data['x'] + ', ' + node_data['y'] + ', ' + site_amounts[node_data['id']]
-// 	})
-// 	.attr('x', (node_data) => {
-// 		return scaleX(node_data['x']) +'px'
-// 	})
-// 	.attr('y', (node_data) => {
-// 		return scaleY(node_data['y']) +'px'
-// 	})
+	// Hide tooltip
+	d3.select('#tooltip')
+		.style('display', 'none')
+}

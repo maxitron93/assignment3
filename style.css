@@ -18,11 +18,35 @@ body {
 }
 
 #network_container {
+    position: relative;
     width: 1000px;
     height: 500px;
     margin: auto;
     margin-top: 20px;
 }
 
+.node {
+    cursor: pointer;
+}
 
+#tooltip {
+    position: absolute;
+    display: none;
+    padding-top: 5px;
+    padding-left: 8px;
+    width: 150px;
+    height: 90px;
+    border-radius: 3px;
+    background-color: rgb(215, 230, 245);
+    pointer-events: none;
+    font-size: 80%;
+    border: 1px solid black;
+}
 
+.info {
+    margin-bottom: 5px;
+}
+
+.info_heading {
+    font-weight: bold;
+}
